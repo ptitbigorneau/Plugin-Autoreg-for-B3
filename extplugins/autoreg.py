@@ -1,17 +1,28 @@
 # AutoReg Plugin
 
 __author__  = 'PtitBigorneau www.ptitbigorneau.fr'
-__version__ = '1.3.1'
+__version__ = '1.4'
 
 import b3
 import b3.plugin
 import b3.events
 from b3 import clients
-from xml.etree.ElementTree import *
 
 class AutoregPlugin(b3.plugin.Plugin):
     
-    _adminPlugin = None   
+    _adminPlugin = None
+    _pluginactived = "on"
+    _noclevel1 = 25
+    _noclevel2 = 100
+    _nocminlevel = 20
+    _adminlevel = 100
+
+    gnamelevel0 = "Guest"
+    gkeywordlevel0 = "guest"
+    gnamelevel1 = "User"
+    gkeywordlevel1 = "user"
+    gnamelevel2 = "Regular"
+    gkeywordlevel2 = "reg"
 
     def onStartup(self):
         
@@ -29,11 +40,35 @@ class AutoregPlugin(b3.plugin.Plugin):
 
     def onLoadConfig(self):
 
-        self._noclevel1 = self.config.getint('settings', 'noclevel1')
-        self._noclevel2 = self.config.getint('settings', 'noclevel2')
-        self._nocminlevel = self.config.getint('settings', 'nocminlevel')
-        self._pluginactived = self.config.get('settings', 'pluginactived')
-        self._adminlevel = self.config.get('settings', 'adminlevel')
+        try:
+            self._pluginactived = self.config.get('settings', 'pluginactived')
+        except Exception, err:
+            self.warning("Using default value %s for Autoreg. %s" % (self._pluginactived, err))
+        self.debug('Autoreg : %s' % self._pluginactived)
+
+        try:
+              self._noclevel1 = self.config.getint('settings', 'noclevel1')
+        except Exception, err:
+            self.warning("Using default value %s for level 1. %s" % (self._noclevel1, err))
+        self.debug('number of connections for level 1 : %s' % self._noclevel1)
+
+        try:
+              self._noclevel2 = self.config.getint('settings', 'noclevel2')
+        except Exception, err:
+            self.warning("Using default value %s for level 2. %s" % (self._noclevel2, err))
+        self.debug('number of connections for level 2 : %s' % self._noclevel2)
+
+        try:
+              self._nocminlevel = self.config.getint('settings', 'nocminlevel')
+        except Exception, err:
+            self.warning("Using default value %s for cmd noc. %s" % (self._nocminlevel, err))
+        self.debug('min level for cmd !noc : %s' % self._nocminlevel)
+
+        try:
+              self._adminlevel = self.config.getint('settings', 'adminlevel')
+        except Exception, err:
+            self.warning("Using default value %s for adminlevel. %s" % (self._adminlevel, err))
+        self.debug('min level for cmds : %s' % self._adminlevel)
 
     def onEvent(self, event):
 
@@ -222,19 +257,29 @@ class AutoregPlugin(b3.plugin.Plugin):
 
         client.message('%s '%(message))
 
+        modif = "%s: %s\n"%(settingname, settingsvalue)
+
         fichier = self.config.fileName
-        tree = parse(fichier)
-        root = tree.getroot()
 
-        variables = root.find('settings')
-
-        for a in variables:
-           
-            if a.get('name') == settingname:
-      
-                a.text = settingsvalue
+        autoregini = open(fichier, "r")
         
-        tree.write(fichier)
+        contenu = autoregini.readlines()
+
+        autoregini.close()
+
+        newcontenu = ""
+
+        for ligne in contenu:
+
+            if settingname in ligne:
+
+                ligne = modif
+
+            newcontenu = "%s%s"%(newcontenu, ligne)        
+
+        autoreginiw = open(fichier, "w")
+        autoreginiw.write(newcontenu)
+        autoreginiw.close()
 
     def group(self):
 
