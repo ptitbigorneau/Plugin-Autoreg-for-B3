@@ -47,25 +47,25 @@ class AutoregPlugin(b3.plugin.Plugin):
         self.debug('Autoreg : %s' % self._pluginactived)
 
         try:
-              self._noclevel1 = self.config.getint('settings', 'noclevel1')
+            self._noclevel1 = self.config.getint('settings', 'noclevel1')
         except Exception, err:
             self.warning("Using default value %s for level 1. %s" % (self._noclevel1, err))
         self.debug('number of connections for level 1 : %s' % self._noclevel1)
 
         try:
-              self._noclevel2 = self.config.getint('settings', 'noclevel2')
+            self._noclevel2 = self.config.getint('settings', 'noclevel2')
         except Exception, err:
             self.warning("Using default value %s for level 2. %s" % (self._noclevel2, err))
         self.debug('number of connections for level 2 : %s' % self._noclevel2)
 
         try:
-              self._nocminlevel = self.config.getint('settings', 'nocminlevel')
+            self._nocminlevel = self.config.getint('settings', 'nocminlevel')
         except Exception, err:
             self.warning("Using default value %s for cmd noc. %s" % (self._nocminlevel, err))
         self.debug('min level for cmd !noc : %s' % self._nocminlevel)
 
         try:
-              self._adminlevel = self.config.getint('settings', 'adminlevel')
+            self._adminlevel = self.config.getint('settings', 'adminlevel')
         except Exception, err:
             self.warning("Using default value %s for adminlevel. %s" % (self._adminlevel, err))
         self.debug('min level for cmds : %s' % self._adminlevel)
