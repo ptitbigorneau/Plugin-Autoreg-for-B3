@@ -1,7 +1,7 @@
 # AutoReg Plugin
 
 __author__  = 'PtitBigorneau www.ptitbigorneau.fr'
-__version__ = '1.4'
+__version__ = '1.4.1'
 
 import b3
 import b3.plugin
@@ -79,15 +79,8 @@ class AutoregPlugin(b3.plugin.Plugin):
                 client = event.client
                 self.group()
             
-                if client.maskedGroup:
-                
-                   cgroup = client.maskedGroup.name
-                
-                else:
-                    
-                    cgroup = self.gnamelevel0
-                
-                        
+                cgroup = client.maxGroup.name
+
                 if (cgroup == self.gnamelevel0) and (client.connections >= self._noclevel1):
             
                     self.debug("clientmaxLevel : %s cgroup : %s gnamelevel0 : %s"%(client.maxLevel, cgroup, self.gnamelevel0))
