@@ -1,7 +1,7 @@
 # AutoReg Plugin
 
 __author__  = 'PtitBigorneau www.ptitbigorneau.fr'
-__version__ = '1.4.1'
+__version__ = '1.4.2'
 
 import b3
 import b3.plugin
@@ -11,7 +11,7 @@ from b3 import clients
 class AutoregPlugin(b3.plugin.Plugin):
     
     _adminPlugin = None
-    _pluginactived = "on"
+
     _noclevel1 = 25
     _noclevel2 = 100
     _nocminlevel = 20
@@ -41,12 +41,6 @@ class AutoregPlugin(b3.plugin.Plugin):
     def onLoadConfig(self):
 
         try:
-            self._pluginactived = self.config.get('settings', 'pluginactived')
-        except Exception, err:
-            self.warning("Using default value %s for Autoreg. %s" % (self._pluginactived, err))
-        self.debug('Autoreg : %s' % self._pluginactived)
-
-        try:
             self._noclevel1 = self.config.getint('settings', 'noclevel1')
         except Exception, err:
             self.warning("Using default value %s for level 1. %s" % (self._noclevel1, err))
@@ -72,56 +66,50 @@ class AutoregPlugin(b3.plugin.Plugin):
 
     def onEvent(self, event):
 
-        if self._pluginactived == 'on':
-
-            if event.type == b3.events.EVT_CLIENT_AUTH:
+        if event.type == b3.events.EVT_CLIENT_AUTH:
             
-                client = event.client
-                self.group()
+            client = event.client
+            self.group()
             
-                cgroup = client.maxGroup.name
+            cgroup = client.maxGroup.name
 
-                if (cgroup == self.gnamelevel0) and (client.connections >= self._noclevel1):
+            if (cgroup == self.gnamelevel0) and (client.connections >= self._noclevel1):
             
-                    self.debug("clientmaxLevel : %s cgroup : %s gnamelevel0 : %s"%(client.maxLevel, cgroup, self.gnamelevel0))
+                self.debug("clientmaxLevel : %s cgroup : %s gnamelevel0 : %s"%(client.maxLevel, cgroup, self.gnamelevel0))
 
-                    client.message('You are connected ^2%s^7 times. Thank you for your loyalty'%(client.connections))
-                    client.message('You are now in the group ^2%s ^7[^21^7]'%(self.gnamelevel1))
+                client.message('You are connected ^2%s^7 times. Thank you for your loyalty'%(client.connections))
+                client.message('You are now in the group ^2%s ^7[^21^7]'%(self.gnamelevel1))
 
-                    try:
+                try:
 
-                        group = clients.Group(keyword= self.gkeywordlevel1)
-                        group = self.console.storage.getGroup(group)
+                    group = clients.Group(keyword= self.gkeywordlevel1)
+                    group = self.console.storage.getGroup(group)
                 
-                    except:
+                except:
                 
-                        return False
+                    return False
                 
-                    client.setGroup(group)
-                    client.save()
+                client.setGroup(group)
+                client.save()
 
-                if (cgroup == self.gnamelevel1) and (client.connections >= self._noclevel2):
+            if (cgroup == self.gnamelevel1) and (client.connections >= self._noclevel2):
  
-                    self.debug("clientmaxLevel : %s cgroup : %s gnamelevel1 : %s"%(client.maxLevel, cgroup, self.gnamelevel1))
+                self.debug("clientmaxLevel : %s cgroup : %s gnamelevel1 : %s"%(client.maxLevel, cgroup, self.gnamelevel1))
  
-                    client.message('You are connected ^2%s^7 times. Thank you for your loyalty'%(client.connections))
-                    client.message('you are now in the group ^2%s ^7[^22^7]'%(self.gnamelevel2))
+                client.message('You are connected ^2%s^7 times. Thank you for your loyalty'%(client.connections))
+                client.message('you are now in the group ^2%s ^7[^22^7]'%(self.gnamelevel2))
                 
-                    try:
+                try:
 
-                        group = clients.Group(keyword= self.gkeywordlevel2)
-                        group = self.console.storage.getGroup(group)
+                    group = clients.Group(keyword= self.gkeywordlevel2)
+                    group = self.console.storage.getGroup(group)
                 
-                    except:
+                except:
                 
-                        return False
+                    return False
                 
-                    client.setGroup(group)
-                    client.save()
-        
-        else:
-
-           return False
+                client.setGroup(group)
+                client.save()
    
     def cmd_noc(self, data, client, cmd=None):
         
@@ -167,50 +155,13 @@ class AutoregPlugin(b3.plugin.Plugin):
         
         else:
         
-            if self._pluginactived == 'on':
-
-                client.message('Autoreg is ^2activated^7 ')
-
-            if self._pluginactived == 'off':
-
-                client.message('Autoreg is ^1deactivated^7 ')
-            
             client.message('The number of connections for ^3Level1 ^7is ^2%s^7 '%(self._noclevel1))
             client.message('The number of connections for ^3Level2 ^7is ^2%s^7 '%(self._noclevel2))
-            client.message('!autoreg <on / off> or <level1 or level2> <number of connections>')
+            client.message('!autoreg <level1 or level2> <number of connections>')
             
             return False
-
-        if input[0] == 'on':
-
-            if self._pluginactived != 'on':
-
-                self._pluginactived = 'on'
-                message = 'Autoreg is now ^2activated^7 '
-                settingname = 'pluginactived'
-                settingsvalue = 'on'                
-
-            else:
-
-                client.message('Autoreg is already ^2activated') 
-
-                return False
-
-        elif input[0] == 'off':
-
-            if self._pluginactived != 'off':
-
-                self._pluginactived = 'off'
-                message = 'Autoreg ^1deactivated^7 '
-                settingname = 'pluginactived'
-                settingsvalue = 'off'
-            else:
-                
-                client.message('autoreg is already ^1disabled')                
-
-                return False
-
-        elif input[0] == 'level1' or input[0] == 'level2':
+    
+        if input[0] == 'level1' or input[0] == 'level2':
 
                 if input[1]:
 
